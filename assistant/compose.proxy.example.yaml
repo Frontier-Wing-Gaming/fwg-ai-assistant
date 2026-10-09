@@ -1,0 +1,12 @@
+# Copy to compose.override.yaml and replace the external network name.
+# Nginx Proxy Manager forwards to fwg-ai-assistant:8000 over HTTP.
+services:
+  assistant:
+    networks:
+      default: {}
+      proxy:
+        aliases: [fwg-ai-assistant]
+networks:
+  proxy:
+    external: true
+    name: REPLACE_WITH_NPM_DOCKER_NETWORK

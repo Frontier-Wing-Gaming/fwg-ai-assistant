@@ -1,0 +1,43 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    cpus: 4
+    mem_limit: 8g
+    memswap_limit: 8g
+    environment:
+      OLLAMA_NUM_PARALLEL: 1
+      OLLAMA_MAX_LOADED_MODELS: 1
+    volumes:
+      - models:/root/.ollama
+  assistant:
+    build: .
+    restart: unless-stopped
+    depends_on: [ollama]
+    env_file: .env
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      HF_HOME: /cache/huggingface
+      OMP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+    cpus: 2
+    mem_limit: 4g
+    memswap_limit: 4g
+    ports:
+      - 127.0.0.1:8099:8000
+    volumes:
+      - ./servers.json:/app/servers.json:ro
+      - ./users.json:/app/users.json:ro
+      - action-state:/state
+      - speech-cache:/cache
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: '3'
+volumes:
+  models:
+  speech-cache:
+  action-state:

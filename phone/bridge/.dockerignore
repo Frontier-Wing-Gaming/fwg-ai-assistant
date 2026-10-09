@@ -1,0 +1,8 @@
+*
+!Dockerfile
+!app.py
+!phone_api.py
+!panel_tools.py
+!bridge.py
+!static/
+!static/**

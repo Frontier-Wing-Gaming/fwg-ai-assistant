@@ -1,0 +1,19 @@
+name: Source checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install test dependencies
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -r requirements-test.txt
+      - name: Test authentication, routing and updates
+        run: .venv/bin/python scripts/test_all.py
+      - name: Check tracked source for runtime files and common credentials
+        run: python3 scripts/check_public_tree.py

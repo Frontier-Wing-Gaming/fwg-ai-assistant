@@ -1,0 +1,27 @@
+services:
+  bridge:
+    build: ./bridge
+    network_mode: host
+    env_file: .env
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 256m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    logging: {driver: json-file, options: {max-size: 5m, max-file: '2'}}
+  asterisk:
+    build: ./asterisk
+    network_mode: host
+    depends_on: [bridge]
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 512m
+    volumes:
+      - ./config/pjsip.conf:/etc/asterisk/pjsip.conf:ro
+      - ./config/extensions.conf:/etc/asterisk/extensions.conf:ro
+      - ./config/rtp.conf:/etc/asterisk/rtp.conf:ro
+      - ./config/modules.conf:/etc/asterisk/modules.conf:ro
+      - ./config/http.conf:/etc/asterisk/http.conf:ro
+      - ./config/manager.conf:/etc/asterisk/manager.conf:ro
+      - ./config/logger.conf:/etc/asterisk/logger.conf:ro
+    logging: {driver: json-file, options: {max-size: 5m, max-file: '2'}}
